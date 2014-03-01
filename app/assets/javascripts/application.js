@@ -13,25 +13,21 @@
 //= require jquery
 //= require jquery_ujs
 //= require util
-//= require vis.min
+//= require d3.min
+//= require jsnetworkx
 //= require graph
+//= require live
+//= require blocks
 //= require_tree .
 
 $(document).ready(function() {
   var localGraph = new Graph();
-  ws = new WebSocket("ws://localhost:8080/inv");
-  ws.onopen    = function()  { ws.send('{"op":"unconfirmed_sub"}');     };
-  ws.onmessage = function(e) { 
-    localGraph.addUnconfirmedTransaction(wsParseTx(e));
-  }
-  ws.onerror   = function()  { console.log("WebSocket error.")     };
-  ws.onclose   = function()  { console.log("Connection closed.");  };
+  blockChainLive(localGraph);
+  updateBlocks(function(data) {
+    block = data.blocks[0];
+    localGraph.addTransactionsForBlock(block.txs, undefined);
+  });
 
-  wsBlocks = new WebSocket("ws://localhost:8080/inv");
-  wsBlocks.onopen    = function()  { ws.send('{"op":"blocks_sub"}');     };
-  wsBlocks.onmessage = function(e) { 
-    console.log("New block!");
-  }
-  wsBlocks.onerror   = function()  { console.log("WebSocket error.")     };
-  wsBlocks.onclose   = function()  { console.log("Connection closed.");  };
+
+
 });

@@ -1,26 +1,14 @@
 function Graph() {
   var self = this;
-  self.unconfirmed_transactions = [];
+  self.unconfirmedTransactions = [];
 
-  var nodes = [
-    {id: 1, label: 'Node 1'},
-    {id: 2, label: 'Node 2'}
-  ];
-  var container = document.getElementById('graph');
-  var options = {
-    width: '100%',
-    height: '600px'
-  };
-  var graph = new vis.Graph(container, undefined, options);
+  var ui = D3UI();
+
   this.addUnconfirmedTransaction = function(tx) {
-     this.unconfirmed_transactions.push(tx);
-     var data = {
-       nodes: this.unconfirmed_transactions,
-       edges: []
-     };
-     graph.setData(data);
   };
 
+  this.addTransactionsForBlock = function(txs, block) {
+  };
   return this;
 };
 
