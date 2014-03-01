@@ -25,7 +25,9 @@ $(document).ready(function() {
   blockChainLive(localGraph);
   updateBlocks(function(data) {
     block = data.blocks[0];
-    localGraph.addTransactionsForBlock(block.txs, undefined);
+    blockDetail(block.hash, function(data) {
+      localGraph.addTransactionsForBlock(data.tx);
+    });
   });
 
 

@@ -17,6 +17,23 @@ window.txsForBlock = function(block, success) {
 }
 
 
+window.blockDetail = function(block, success) {
+  var url = 'http://live.bitcore.io/api/block/'  + block + '?callback=?';
+  $.ajax({
+    type: 'GET',
+    url: url,
+    async: false,
+    jsonpCallback: 'jsonCallback',
+    contentType: "application/json",
+    dataType: 'jsonp',
+    success: success,
+    error: function(e) {
+     console.log("Error from tx for block " + e.message);
+   }
+  });
+}
+
+
 window.updateBlocks = function(success) {
   var url = 'http://live.bitcore.io/api/blocks?callback=?';
   $.ajax({

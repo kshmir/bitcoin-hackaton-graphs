@@ -1,9 +1,7 @@
 function D3UI() {
   var width = 1280,
       height = 600;
-
   var fill = d3.scale.category10();
-
   var nodes = [];
 
   var force = d3.layout.force()
@@ -13,34 +11,53 @@ function D3UI() {
     .on("tick", tick)
     .start();
 
+  force.on("tick", function(e) {
+    var k = 100 * e.alpha;
+    nodes.forEach(function(o, i) {
+      o.x += k * (groupClusterIndexes[o.category]);
+    });
+
+    node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+  });
+
   var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-  var node = svg.selectAll(".node")
-    .data(nodes)
-    .enter().append("circle")
-    .attr("class", "node")
-    .attr("cx", function(d) { return d.x; })
-    .attr("cy", function(d) { return d.y; })
-    .attr("r", 5)
-    .style("fill", function(d, i) { return fill(i & 3); })
-    .style("stroke", function(d, i) { return d3.rgb(fill(i & 3)).darker(2); })
+  var node = svg.selectAll(".node"),
+      link = svg.selectAll(".link");
 
-    function tick(e) {
-      var k = 10 * e.alpha;
-      nodes.forEach(function(o, i) {
-        o.y += i & 1 ? k : -k;
-        o.x += i & 2 ? k : -k;
-      });
-      node.attr("cx", function(d) { return d.x; })
+  var groupKeyIndex = 0;
+  var groupClusterIndexes = {};
+
+  function tick(e) {
+    node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
-    }
+  }
 
   svg.style("opacity", 1e-6)
     .transition()
     .duration(1000)
     .style("opacity", 1);
+
+  this.appendNode = function(n, opts) {
+
+    nodes.push(n);
+    node = node.data(force.nodes(), function(d) { return d.id;});
+    node.enter()
+      .append("circle")
+      .attr("class", function(d) { return "node " + d.id; })
+      .attr("r", 6)
+      .attr("fill", opts.color || "#cc0000")
+    node.exit().remove();
+
+    force.start();
+  };
+
+  this.registerGroup = function(groupKey) {
+    groupClusterIndexes[groupKey] = groupKeyIndex++;
+  }
 
   return this;
 }
