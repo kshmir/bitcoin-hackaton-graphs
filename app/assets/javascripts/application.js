@@ -19,6 +19,7 @@
 //= require live
 //= require blocks
 //= require_tree .
+//= require bootstrap.min
 
 $(document).ready(function() {
   var localGraph = new Graph();
